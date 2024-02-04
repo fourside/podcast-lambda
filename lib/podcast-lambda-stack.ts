@@ -1,15 +1,15 @@
 import * as cdk from "aws-cdk-lib";
-// import { RemovalPolicy } from "aws-cdk-lib";
+import { Duration, RemovalPolicy } from "aws-cdk-lib";
 import * as ecr from "aws-cdk-lib/aws-ecr";
-// import * as events from "aws-cdk-lib/aws-events";
-// import * as targets from "aws-cdk-lib/aws-events-targets";
+import * as events from "aws-cdk-lib/aws-events";
+import * as targets from "aws-cdk-lib/aws-events-targets";
 import * as iam from "aws-cdk-lib/aws-iam";
-// import * as lambda from "aws-cdk-lib/aws-lambda";
-// import * as logs from "aws-cdk-lib/aws-logs";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as logs from "aws-cdk-lib/aws-logs";
 import { Construct } from "constructs";
-// import type { PodcastEvent } from "../event";
-// import { env } from "./env";
-// import { jstToUtc, schedules, toTime } from "./schedules";
+import type { PodcastEvent } from "../event";
+import { env } from "./env";
+import { jstToUtc, schedules, toTime } from "./schedules";
 
 const resourceName = "podcast-lambda";
 export class PodcastLambdaStack extends cdk.Stack {
@@ -56,49 +56,50 @@ export class PodcastLambdaStack extends cdk.Stack {
     );
     ecrRepository.grant(ecrRole);
 
-    // const logGroup = new logs.LogGroup(this, `${resourceName}-log-group`, {
-    //   logGroupName: "/aws/lambda/podcast-lambda",
-    //   removalPolicy: RemovalPolicy.DESTROY,
-    //   retention: logs.RetentionDays.THREE_MONTHS,
-    // });
+    const logGroup = new logs.LogGroup(this, `${resourceName}-log-group`, {
+      logGroupName: "/aws/lambda/podcast-lambda",
+      removalPolicy: RemovalPolicy.DESTROY,
+      retention: logs.RetentionDays.THREE_MONTHS,
+    });
 
-    // const podcastLambda = new lambda.DockerImageFunction(
-    //   this,
-    //   resourceName,
-    //   {
-    //     code: lambda.DockerImageCode.fromEcr(ecrRepository),
-    //     logGroup,
-    //     environment: { ...env, TZ: "Asia/Tokyo" },
-    //   },
-    // );
+    const podcastLambda = new lambda.DockerImageFunction(
+      this,
+      resourceName,
+      {
+        code: lambda.DockerImageCode.fromEcr(ecrRepository),
+        logGroup,
+        timeout: Duration.minutes(7),
+        environment: { ...env, TZ: "Asia/Tokyo" },
+      },
+    );
 
-    // for (const schedule of schedules) {
-    //   const toCron = toTime(schedule.cronDate, schedule.duration);
-    //   const cron = jstToUtc(toCron);
-    //   const targetInput: PodcastEvent = {
-    //     title: schedule.title,
-    //     stationId: schedule.station,
-    //     personality: schedule.personality,
-    //     from: {
-    //       hour: schedule.cronDate.hour,
-    //       min: schedule.cronDate.min,
-    //     },
-    //     to: { hour: toCron.hour, min: toCron.min },
-    //   };
-    //   new events.Rule(this, `${resourceName}-${schedule.name}-rule`, {
-    //     schedule: events.Schedule.cron({
-    //       hour: cron.hour.toString(),
-    //       minute: cron.min.toString(),
-    //       weekDay: Array.isArray(cron.dayOfWeek)
-    //         ? cron.dayOfWeek.join(",")
-    //         : cron.dayOfWeek,
-    //     }),
-    //     targets: [
-    //       new targets.LambdaFunction(podcastLambda, {
-    //         event: events.RuleTargetInput.fromObject(targetInput),
-    //       }),
-    //     ],
-    //   });
-    // }
+    for (const schedule of schedules) {
+      const toCron = toTime(schedule.cronDate, schedule.duration);
+      const cron = jstToUtc(toCron);
+      const targetInput: PodcastEvent = {
+        title: schedule.title,
+        stationId: schedule.station,
+        personality: schedule.personality,
+        from: {
+          hour: schedule.cronDate.hour,
+          min: schedule.cronDate.min,
+        },
+        to: { hour: toCron.hour, min: toCron.min },
+      };
+      new events.Rule(this, `${resourceName}-${schedule.name}-rule`, {
+        schedule: events.Schedule.cron({
+          hour: cron.hour.toString(),
+          minute: cron.min.toString(),
+          weekDay: Array.isArray(cron.dayOfWeek)
+            ? cron.dayOfWeek.join(",")
+            : cron.dayOfWeek,
+        }),
+        targets: [
+          new targets.LambdaFunction(podcastLambda, {
+            event: events.RuleTargetInput.fromObject(targetInput),
+          }),
+        ],
+      });
+    }
   }
 }
