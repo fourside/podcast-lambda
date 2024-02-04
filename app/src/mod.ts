@@ -22,7 +22,8 @@ export async function handler(event: unknown) {
 async function main(event: unknown) {
   const result = podcastEventSchema.safeParse(event);
   if (!result.success) {
-    throw new Error(); // TODO
+    console.error(result.error);
+    throw new Error("event is not valid", result.error);
   }
   const program = convertEvent(result.data);
   const authToken = await authorize();
