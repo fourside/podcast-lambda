@@ -57,7 +57,7 @@ export class PodcastLambdaStack extends cdk.Stack {
     ecrRepository.grant(ecrRole);
 
     // const logGroup = new logs.LogGroup(this, `${resourceName}-log-group`, {
-    //   logGroupName: "/aws/lambda/podcast",
+    //   logGroupName: "/aws/lambda/podcast-lambda",
     //   removalPolicy: RemovalPolicy.DESTROY,
     //   retention: logs.RetentionDays.THREE_MONTHS,
     // });
