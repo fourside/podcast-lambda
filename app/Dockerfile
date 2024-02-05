@@ -8,5 +8,3 @@ RUN apk add --no-cache \
         tzdata ffmpeg bash \
     && cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
     && deno task cache
-
-CMD ["crond", "-f", "-L", "/var/log/cron.log"]
