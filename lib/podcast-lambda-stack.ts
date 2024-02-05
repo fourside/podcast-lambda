@@ -68,7 +68,7 @@ export class PodcastLambdaStack extends cdk.Stack {
       {
         code: lambda.DockerImageCode.fromEcr(ecrRepository),
         logGroup,
-        timeout: Duration.minutes(7),
+        timeout: Duration.minutes(3), // TODO
         environment: { ...env, TZ: "Asia/Tokyo" },
       },
     );
