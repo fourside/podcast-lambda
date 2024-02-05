@@ -6,10 +6,8 @@
   },
   "imports": {
     "std/assert": "https://deno.land/std@0.214.0/assert/mod.ts",
-    "std/cli": "https://deno.land/std@0.214.0/cli/mod.ts",
     "std/encoding/base64": "https://deno.land/std@0.214.0/encoding/base64.ts",
     "std/datetime": "https://deno.land/std@0.214.0/datetime/mod.ts",
-    "std/fmt/printf": "https://deno.land/std@0.214.0/fmt/printf.ts",
     "std/path": "https://deno.land/std@0.214.0/path/mod.ts",
     "x/aws_api/client": "https://deno.land/x/aws_api@v0.8.1/client/mod.ts",
     "x/aws_api/s3": "https://deno.land/x/aws_api@v0.8.1/services/s3/mod.ts",

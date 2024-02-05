@@ -1,10 +1,8 @@
 import { assertEquals } from "std/assert";
 import {
   addMinutes,
-  formatTimeForFfmpeg,
   formatTimefreeDateTime,
   getDateIfMidnightThenSubtracted,
-  isoDateTime,
   minusDays,
   parseAsFromTime,
 } from "./date.ts";
@@ -58,15 +56,6 @@ Deno.test("夜中で年初なら前年になる", () => {
   assertEquals(result.getMinutes(), date.getMinutes());
 });
 
-Deno.test("FFMPEG用のtimeフォーマット", () => {
-  // arrange
-  const duration = 150;
-  // act
-  const result = formatTimeForFfmpeg(duration);
-  // assert
-  assertEquals(result, "02:30:00");
-});
-
 Deno.test("parseAsFromTime", () => {
   // arrange
   const fromTimeString = "202001102030";
@@ -113,13 +102,4 @@ Deno.test("formatTimefreeDateTime", () => {
   const result = formatTimefreeDateTime(date);
   // assert
   assertEquals(result, "20200102030405");
-});
-
-Deno.test("isoDateTime", () => {
-  // arrange
-  const date = new Date(2020, 0, 2, 3, 4, 5);
-  // act
-  const result = isoDateTime(date);
-  // assert
-  assertEquals(result, "2020-01-02 03:04:05");
 });

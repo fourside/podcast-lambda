@@ -1,12 +1,10 @@
-FROM denoland/deno:alpine-1.40.3
+FROM hayd/deno-lambda:1.32.5
 
 WORKDIR /work
 
 COPY . .
 
-RUN apk add --no-cache \
-        tzdata ffmpeg bash \
-    && cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime \
+RUN yum install -y ffmpeg \
     && deno task cache
 
 CMD [ "mod.handler" ]

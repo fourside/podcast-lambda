@@ -1,5 +1,4 @@
 import { format, parse } from "std/datetime";
-import { sprintf } from "std/fmt/printf";
 
 export function getDateIfMidnightThenSubtracted(date: Date): Date {
   const hour = date.getHours();
@@ -9,18 +8,8 @@ export function getDateIfMidnightThenSubtracted(date: Date): Date {
   return new Date(date.getTime());
 }
 
-export function formatTimeForFfmpeg(duration: number): string {
-  const hour = Math.floor(duration / 60);
-  const min = duration % 60;
-  return sprintf("%02d:%02d:%02d", hour, min, 0);
-}
-
 export function formatDateTime(date: Date): string {
   return format(date, "yyyy/MM/dd HH:mm");
-}
-
-export function isoDateTime(date: Date): string {
-  return format(date, "yyyy-MM-dd HH:mm:ss");
 }
 
 export function parseAsFromTime(fromTime: string): Date {
