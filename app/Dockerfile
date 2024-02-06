@@ -4,9 +4,11 @@ WORKDIR /work
 
 COPY . .
 
-RUN wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz \
-  && tar xvf ffmpeg-release-amd64-static.tar.xz \
-  && mv ffmpeg-*-amd64-static/ff* /usr/local/bin/ \
-  && deno task cache
+RUN yum upgrade -q -y \
+  && yum install -q -y tar xz \
+  && curl -O -s https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz \
+  && tar xf ffmpeg-release-amd64-static.tar.xz \
+  && mv ffmpeg-*-amd64-static/ff* /usr/local/bin/
+  # && deno task cache
 
 CMD [ "mod.handler" ]
