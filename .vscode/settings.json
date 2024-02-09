@@ -1,9 +1,12 @@
 {
-  "deno.enable": true,
-  "deno.lint": true,
-  "deno.unstable": false,
-  "deno.importMap": "./app/deno.json",
+  "editor.codeActionsOnSave": {
+    "quickfix.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
+  },
+  "editor.defaultFormatter": "biomejs.biome",
   "editor.formatOnSave": true,
-  "deno.enablePaths": ["./app"],
-  "editor.defaultFormatter": "denoland.vscode-deno"
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome",
+    "editor.formatOnSave": true
+  }
 }

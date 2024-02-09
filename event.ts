@@ -1,4 +1,4 @@
-export type PodcastEvent = {
+export type CronEvent = {
   title: string;
   stationId: string;
   personality: string;
