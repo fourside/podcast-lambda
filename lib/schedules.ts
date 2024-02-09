@@ -85,7 +85,7 @@ export const schedules: Schedule[] = [
 const DAY_OF_WEEKS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"] as const;
 
 type CronDate = { min: number; hour: number; dayOfWeek: DayOfWeek };
-type SingleDayOfWeek = typeof DAY_OF_WEEKS[number];
+type SingleDayOfWeek = (typeof DAY_OF_WEEKS)[number];
 type MultiDayOfWeek = SingleDayOfWeek[];
 type DayOfWeek = SingleDayOfWeek | MultiDayOfWeek;
 
@@ -115,7 +115,7 @@ export function toTime(cron: CronDate, duration: number): CronDate {
       min,
     };
   }
-  const hour = cron.hour + (min / 60);
+  const hour = cron.hour + min / 60;
   if (hour < 24) {
     return {
       ...cron,
