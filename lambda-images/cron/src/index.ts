@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import type {
   APIGatewayEvent,
   APIGatewayProxyResult,
@@ -5,9 +6,12 @@ import type {
 } from "aws-lambda";
 import * as v from "valibot";
 import { authorize } from "../../shared/auth-client";
+import { Env } from "../../shared/env";
 import { putMp3 } from "../../shared/r2-client";
 import { convertEvent } from "./convert";
 import { record } from "./record";
+
+Sentry.init({ dsn: Env.sentryDsn });
 
 export const handler = async (
   event: APIGatewayEvent,
@@ -24,17 +28,13 @@ export const handler = async (
       throw new Error("cron event is not valid");
     }
 
-    console.log("parsed", result.output);
     const program = convertEvent(result.output);
-    console.log("converted", program);
     const authToken = await authorize();
-    console.log("authed", authToken);
     await record(program, authToken);
-    console.log("recorded");
-    await putMp3(program.title);
-    console.log("put");
+    await putMp3(program.outputFileName);
   } catch (err) {
     console.error(err);
+    Sentry.captureException(err);
     return {
       statusCode: 400,
       body: JSON.stringify({
