@@ -21,8 +21,8 @@ export class PodcastLambdaStack extends cdk.Stack {
       repositoryName: `${resourceName}-cron-repository`,
     });
 
-    const ecrSpotRepository = new ecr.Repository(this, "PodcastEcrSpotRepo", {
-      repositoryName: `${resourceName}-spot-repository`,
+    const ecrSpotTaskRepository = new ecr.Repository(this, "PodcastEcrSpotRepo", {
+      repositoryName: `${resourceName}-spot-task-repository`,
     });
 
     const ecrRole = new iam.Role(this, "PodcastEcrRole", {
@@ -58,13 +58,13 @@ export class PodcastLambdaStack extends cdk.Stack {
         effect: iam.Effect.ALLOW,
         resources: [
           ecrCronRepository.repositoryArn,
-          ecrSpotRepository.repositoryArn,
+          ecrSpotTaskRepository.repositoryArn,
         ],
       }),
     );
 
     ecrCronRepository.grant(ecrRole);
-    ecrSpotRepository.grant(ecrRole);
+    ecrSpotTaskRepository.grant(ecrRole);
 
     const cronLogGroup = new logs.LogGroup(
       this,
