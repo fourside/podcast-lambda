@@ -1,0 +1,29 @@
+!/bin/sh
+set -xe
+
+TARGET_PATH="lambda-images"
+
+HAS_CHANGES=false
+
+# コミットを走査して、対象のファイルパスの変更があるか確認
+while read -r local_ref local_sha remote_ref remote_sha
+do
+    # 変更されたファイルを取得
+    changed_files=$(git diff --name-only "$local_sha" "$remote_sha")
+
+    # 対象のファイルが変更されているか確認
+    if echo "$changed_files" | grep -q "^$TARGET_PATH/"; then
+        HAS_CHANGES=true
+        break
+    fi
+done
+
+if ! $HAS_CHANGES; then
+  exit 0
+fi
+
+cd $TARGET_PATH
+
+npm run check
+npm run test -- --run
+npm run build:cron

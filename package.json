@@ -8,7 +8,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "prepare": "git config --local core.hooksPath .githooks"
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
