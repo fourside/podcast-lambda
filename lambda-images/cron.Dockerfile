@@ -49,7 +49,7 @@ ENV LC_ALL C.UTF-8
 COPY --from=build-image ${FUNCTION_DIR} ${FUNCTION_DIR}
 
 RUN apt update -qq \
-  && apt upgrade \
+  && apt upgrade -y \
   && apt install -y --no-install-recommends ffmpeg \
   && mv dist/* .
 
