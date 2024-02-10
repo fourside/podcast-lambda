@@ -17,9 +17,6 @@ export const handler = async (
   event: APIGatewayEvent,
   context: Context,
 ): Promise<APIGatewayProxyResult> => {
-  // console.log(`Event: ${JSON.stringify(event, null, 2)}`);
-  // console.log(`Context: ${JSON.stringify(context, null, 2)}`);
-
   try {
     console.log("start");
     const result = v.safeParse(CronEventSchema, event);
@@ -32,6 +29,7 @@ export const handler = async (
     const authToken = await authorize();
     await record(program, authToken);
     await putMp3(program.outputFileName);
+    console.log("done");
   } catch (err) {
     console.error(err);
     Sentry.captureException(err);
