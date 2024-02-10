@@ -5,12 +5,14 @@
   "main": "index.js",
   "scripts": {
     "build:cron": "node build_cron.js",
+    "check": "biome ci cron/src",
     "test": "vitest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@biomejs/biome": "1.5.3",
     "@sentry/esbuild-plugin": "^2.14.0",
     "@types/aws-lambda": "^8.10.133",
     "esbuild": "^0.20.0",

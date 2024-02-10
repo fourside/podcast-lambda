@@ -32,7 +32,7 @@ jobs:
       - name: Build and push
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: podcast-lambda-repository
+          REPOSITORY: podcast-lambda-cron-repository
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build . -f cron.Dockerfile --tag ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }} --tag ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:latest

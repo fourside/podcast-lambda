@@ -1,0 +1,38 @@
+name: ci_cron_image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "lambda-images/cron/**"
+      - "lambda-images/shared/**"
+  pull_request:
+    paths:
+      - "lambda-images/cron/**"
+      - "lambda-images/shared/**"
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lambda-images
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+
+      - name: Setup dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run check
+
+      - name: Test
+        run: npm run test -- run
