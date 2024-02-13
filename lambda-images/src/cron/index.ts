@@ -13,8 +13,8 @@ export const handler = async (
   event: APIGatewayEvent,
   context: Context,
 ): Promise<APIGatewayProxyResult> => {
+  console.log("start", event);
   try {
-    console.log("start");
     await main(event);
     console.log("done");
   } catch (err) {
