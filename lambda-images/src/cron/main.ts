@@ -1,8 +1,8 @@
 import * as v from "valibot";
 import { authorize } from "../shared/auth-client";
 import { putMp3 } from "../shared/r2-client";
+import { record } from "../shared/record";
 import { convertEvent } from "./convert";
-import { record } from "./record";
 
 export async function main(cronEvent: unknown): Promise<void> {
   const result = v.safeParse(CronEventSchema, cronEvent);

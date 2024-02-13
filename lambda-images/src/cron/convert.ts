@@ -4,7 +4,7 @@ import {
   getDateIfMidnightThenSubtracted,
 } from "../shared/date";
 import { getOutputFilename } from "../shared/output-filename";
-import type { ProgramTimefree } from "./record";
+import type { ProgramTimefree } from "../shared/record";
 
 export function convertEvent(event: CronEvent): ProgramTimefree {
   const from = new Date();
