@@ -1,6 +1,6 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { Env } from "./env";
 
 export async function putMp3(filePath: string): Promise<void> {
