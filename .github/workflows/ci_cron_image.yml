@@ -5,12 +5,12 @@ on:
     branches:
       - main
     paths:
-      - "lambda-images/cron/**"
-      - "lambda-images/shared/**"
+      - "lambda-images/src/cron/**"
+      - "lambda-images/src/shared/**"
   pull_request:
     paths:
-      - "lambda-images/cron/**"
-      - "lambda-images/shared/**"
+      - "lambda-images/src/cron/**"
+      - "lambda-images/src/shared/**"
 
 jobs:
   ci:
