@@ -1,9 +1,19 @@
 const esbuild = require("esbuild");
 const { sentryEsbuildPlugin } = require("@sentry/esbuild-plugin");
 
+const srcPathConfig = {
+  cron: "src/cron/index.ts",
+  "spot-task": "src/spot-task/index.ts",
+};
+
+const srcPath = srcPathConfig[process.argv[2]];
+if (srcPath === undefined) {
+  new Error(`invalid src type: ${process.argv[2]}`);
+}
+
 (async () => {
   const result = await esbuild.build({
-    entryPoints: ["cron/src/index.ts"],
+    entryPoints: [srcPath],
     bundle: true,
     minify: true,
     target: "es2020",

@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+import { Env } from "./env";
 import { getOutputFilename } from "./output-filename";
 
 describe(getOutputFilename.name, () => {
@@ -9,6 +10,6 @@ describe(getOutputFilename.name, () => {
     // act
     const result = getOutputFilename(title, date);
     // assert
-    expect(result).toBe("title-20220101.mp3");
+    expect(result).toBe(`${Env.writableDir}/title-20220101.mp3`);
   });
 });

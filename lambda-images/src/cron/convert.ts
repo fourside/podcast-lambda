@@ -2,8 +2,8 @@ import type { CronEvent } from "../../../event";
 import {
   formatTimefreeDateTime,
   getDateIfMidnightThenSubtracted,
-} from "../../shared/date";
-import { getOutputFilename } from "../../shared/output-filename";
+} from "../shared/date";
+import { getOutputFilename } from "../shared/output-filename";
 import type { ProgramTimefree } from "./record";
 
 export function convertEvent(event: CronEvent): ProgramTimefree {

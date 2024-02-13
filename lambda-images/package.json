@@ -4,9 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:cron": "node build_cron.js",
-    "check": "biome ci cron/src",
-    "test": "vitest"
+    "build:cron": "node build.js cron",
+    "build:spot-task": "node build.js spot-task",
+    "check": "biome ci src",
+    "test": "vitest",
+    "e2e:cron": "node -r ts-node/register --env-file=./.env src/cron/e2e.ts",
+    "e2e:spot-task": "node -r ts-node/register --env-file=./.env src/spot-task/e2e.ts"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +19,7 @@
     "@sentry/esbuild-plugin": "^2.14.0",
     "@types/aws-lambda": "^8.10.133",
     "esbuild": "^0.20.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
     "vitest": "^1.2.2"
   },

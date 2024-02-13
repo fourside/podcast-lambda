@@ -14,6 +14,7 @@ export const Env = {
       unreachable("CLOUDFLARE_SECRET_ACCESS_KEY"),
   },
   sentryDsn: process.env.SENTRY_DSN || unreachable("SENTRY_DSN"),
+  writableDir: process.env.WRITABLE_DIR || "/tmp",
 } as const;
 
 function unreachable(name: string): never {
