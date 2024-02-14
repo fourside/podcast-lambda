@@ -1,5 +1,5 @@
-import { run } from "./ffmpeg.js";
-import { RecRadikoError } from "./rec-radiko-error.js";
+import { run } from "./ffmpeg";
+import { RecRadikoError } from "./rec-radiko-error";
 
 export type ProgramTimefree = {
   station: string;
