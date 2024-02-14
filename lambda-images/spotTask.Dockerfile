@@ -26,7 +26,7 @@ COPY . ${FUNCTION_DIR}
 # Install the runtime interface client
 RUN npm ci \
   && npm install aws-lambda-ric \
-  && npm run build:stpo-task
+  && npm run build:spot-task
 
 
 # Grab a fresh slim copy of the image to reduce the final size
