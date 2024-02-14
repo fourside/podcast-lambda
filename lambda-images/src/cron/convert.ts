@@ -10,12 +10,14 @@ export function convertEvent(event: CronEvent): ProgramTimefree {
   const from = new Date();
   from.setHours(event.from.hour);
   from.setMinutes(event.from.min);
+  from.setSeconds(0);
   const recordDate = getDateIfMidnightThenSubtracted(from);
   const outputFileName = getOutputFilename(event.title, recordDate);
 
   const to = new Date(); // FIXME: 日跨ぎは考慮していない
   to.setHours(event.to.hour);
   to.setMinutes(event.to.min);
+  to.setSeconds(0);
 
   return {
     station: event.stationId,
