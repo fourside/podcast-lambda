@@ -30,6 +30,7 @@ function eventDateTimeToDate(datetime: EventDateTime): Date {
     datetime.day,
     datetime.hour,
     datetime.min,
+    0,
   );
   if (date.getFullYear() !== datetime.year) {
     throw new Error(
