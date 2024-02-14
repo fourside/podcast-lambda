@@ -7,7 +7,7 @@
     "build:cron": "node build.js cron",
     "build:spot-task": "node build.js spot-task",
     "check": "biome ci src",
-    "test": "vitest",
+    "test": "TZ=Asia/Tokyo vitest",
     "e2e:cron": "node -r ts-node/register --env-file=./.env src/cron/e2e.ts",
     "e2e:spot-task": "node -r ts-node/register --env-file=./.env src/spot-task/e2e.ts"
   },
