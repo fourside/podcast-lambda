@@ -5,6 +5,10 @@ import { record } from "../shared/record";
 import { convertEvent } from "./convert";
 
 export async function main(event: unknown): Promise<void> {
+  const isEmpty = v.safeParse(EmptySchema, event);
+  if (isEmpty.success) {
+    return;
+  }
   const result = v.safeParse(SpotTaskEventSchema, event);
   if (!result.success) {
     console.error(result.issues);
@@ -15,6 +19,8 @@ export async function main(event: unknown): Promise<void> {
   await record(program, authToken);
   await putMp3(program.outputFileName);
 }
+
+const EmptySchema = v.object({});
 
 const DateTimeSchema = v.object({
   year: v.number(),
