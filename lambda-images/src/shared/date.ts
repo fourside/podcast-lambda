@@ -15,13 +15,8 @@ const slackDateFormatter = new Intl.DateTimeFormat("ja-JP", {
 });
 
 export function formatDateTime(date: Date): string {
-  // return format(date, "yyyy/MM/dd HH:mm");
   return slackDateFormatter.format(date);
 }
-
-// export function parseAsFromTime(fromTime: string): Date {
-//   return parse(fromTime, "yyyyMMddHHmm");
-// }
 
 export function addMinutes(date: Date, minutes: number): Date {
   return new Date(date.getTime() + minutes * 1000 * 60);

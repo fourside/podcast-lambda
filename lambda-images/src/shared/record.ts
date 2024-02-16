@@ -1,4 +1,4 @@
-import { run } from "./ffmpeg";
+import { ffmpeg } from "./ffmpeg";
 import { RecRadikoError } from "./rec-radiko-error";
 
 export type ProgramTimefree = {
@@ -35,7 +35,7 @@ export async function record(
     `year=${program.year}`,
     program.outputFileName,
   ];
-  const { success, stdout, stderr } = await run(args);
+  const { success, stdout, stderr } = await ffmpeg(args);
   if (success) {
     if (stdout.length !== 0) {
       console.log(new TextDecoder().decode(stdout));
