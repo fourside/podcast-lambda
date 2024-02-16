@@ -21,9 +21,13 @@ export class PodcastLambdaStack extends cdk.Stack {
       repositoryName: `${resourceName}-cron-repository`,
     });
 
-    const ecrSpotTaskRepository = new ecr.Repository(this, "PodcastEcrSpotRepo", {
-      repositoryName: `${resourceName}-spot-task-repository`,
-    });
+    const ecrSpotTaskRepository = new ecr.Repository(
+      this,
+      "PodcastEcrSpotRepo",
+      {
+        repositoryName: `${resourceName}-spot-task-repository`,
+      },
+    );
 
     const ecrRole = new iam.Role(this, "PodcastEcrRole", {
       roleName: `${resourceName}-repository-role`,
@@ -70,7 +74,7 @@ export class PodcastLambdaStack extends cdk.Stack {
       this,
       `${resourceName}-cron-log-group`,
       {
-        logGroupName: "/aws/lambda/podcast-cron-lambda",
+        logGroupName: "/aws/lambda/podcast-lambda-cron",
         removalPolicy: RemovalPolicy.DESTROY,
         retention: logs.RetentionDays.THREE_MONTHS,
       },
@@ -80,9 +84,33 @@ export class PodcastLambdaStack extends cdk.Stack {
       this,
       `${resourceName}-cron`,
       {
+        functionName: `${resourceName}-cron`,
         code: lambda.DockerImageCode.fromEcr(ecrCronRepository),
         logGroup: cronLogGroup,
-        timeout: Duration.minutes(3), // TODO
+        timeout: Duration.minutes(7),
+        memorySize: 1024,
+        environment: { ...env, TZ: "Asia/Tokyo" },
+      },
+    );
+
+    const spotTaskLogGroup = new logs.LogGroup(
+      this,
+      `${resourceName}-spot-task-log-group`,
+      {
+        logGroupName: "/aws/lambda/podcast-lambda-spot-task",
+        removalPolicy: RemovalPolicy.DESTROY,
+        retention: logs.RetentionDays.THREE_MONTHS,
+      },
+    );
+
+    const spotTaskLambda = new lambda.DockerImageFunction(
+      this,
+      `${resourceName}-spot-task`,
+      {
+        functionName: `${resourceName}-spot-task`,
+        code: lambda.DockerImageCode.fromEcr(ecrSpotTaskRepository),
+        logGroup: spotTaskLogGroup,
+        timeout: Duration.minutes(7),
         memorySize: 1024,
         environment: { ...env, TZ: "Asia/Tokyo" },
       },
@@ -117,5 +145,19 @@ export class PodcastLambdaStack extends cdk.Stack {
         ],
       });
     }
+
+    new events.Rule(this, `${resourceName}-spot-task-rule`, {
+      ruleName: "prevent-inactivation",
+      schedule: events.Schedule.cron({
+        minute: "0",
+        hour: "0",
+        weekDay: "SUN",
+      }),
+      targets: [
+        new targets.LambdaFunction(spotTaskLambda, {
+          event: events.RuleTargetInput.fromObject({}),
+        }),
+      ],
+    });
   }
 }
