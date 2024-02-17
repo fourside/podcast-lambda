@@ -1,16 +1,13 @@
 import type { EventDateTime, SpotTaskEvent } from "../../../event";
-import {
-  formatTimefreeDateTime,
-  getDateIfMidnightThenSubtracted,
-} from "../shared/date";
+import { formatTimefreeDateTime, subtractIfMidnight } from "../shared/date";
 import { getOutputFilename } from "../shared/output-filename";
 import type { ProgramTimefree } from "../shared/record";
 
 export function convertEvent(event: SpotTaskEvent): ProgramTimefree {
   const from = eventDateTimeToDate(event.from);
   const to = eventDateTimeToDate(event.to);
-  const recordDate = getDateIfMidnightThenSubtracted(from);
-  const outputFileName = getOutputFilename(event.title, recordDate);
+  const broadcastingDate = subtractIfMidnight(from);
+  const outputFileName = getOutputFilename(event.title, broadcastingDate);
 
   return {
     station: event.stationId,
@@ -19,7 +16,7 @@ export function convertEvent(event: SpotTaskEvent): ProgramTimefree {
     outputFileName,
     fromTime: formatTimefreeDateTime(from),
     toTime: formatTimefreeDateTime(to),
-    year: recordDate.getFullYear(),
+    year: broadcastingDate.getFullYear(),
   };
 }
 

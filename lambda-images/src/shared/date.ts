@@ -1,29 +1,12 @@
-export function getDateIfMidnightThenSubtracted(date: Date): Date {
+/**
+ *  if a midnight date is given, handle it as one day ago.
+ */
+export function subtractIfMidnight(date: Date): Date {
   const hour = date.getHours();
   if (hour >= 0 && hour <= 3) {
     return new Date(date.getTime() - 1000 * 60 * 60 * 24);
   }
   return new Date(date.getTime());
-}
-
-const slackDateFormatter = new Intl.DateTimeFormat("ja-JP", {
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-  hour: "2-digit",
-  minute: "2-digit",
-});
-
-export function formatDateTime(date: Date): string {
-  return slackDateFormatter.format(date);
-}
-
-export function addMinutes(date: Date, minutes: number): Date {
-  return new Date(date.getTime() + minutes * 1000 * 60);
-}
-
-export function minusDays(date: Date, days: number): Date {
-  return new Date(date.getTime() - days * 1000 * 60 * 60 * 24);
 }
 
 export function formatTimefreeDateTime(date: Date): string {
@@ -32,6 +15,9 @@ export function formatTimefreeDateTime(date: Date): string {
   return `${yyyymmdd}${hhmmss}`;
 }
 
+/**
+ * @returns formatted string as `YYYYMMDD`
+ */
 export function formatYMD(date: Date): string {
   const year = date.getFullYear();
   const month = monthFormatter.format(date);

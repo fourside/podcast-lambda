@@ -1,19 +1,15 @@
 import * as Sentry from "@sentry/node";
-import type {
-  APIGatewayEvent,
-  APIGatewayProxyResult,
-  Context,
-} from "aws-lambda";
+import type { APIGatewayProxyResult, Context } from "aws-lambda";
 import { Env } from "../shared/env";
 import { main } from "./main";
 
 Sentry.init({ dsn: Env.sentryDsn });
 
 export const handler = async (
-  event: APIGatewayEvent,
+  event: unknown,
   context: Context,
 ): Promise<APIGatewayProxyResult> => {
-  console.log("start", event);
+  console.log("start", event, context);
   try {
     await main(event);
     console.log("done");
