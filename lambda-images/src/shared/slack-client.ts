@@ -1,7 +1,28 @@
+import { Env } from "./env";
+
+type Blocks = {
+  blocks: (SectionBlock | ContextBlock)[];
+};
+
+type SectionBlock = {
+  type: "section";
+  text: {
+    type: "plain_text" | "mrkdwn";
+    text: string;
+  };
+};
+
+type ContextBlock = {
+  type: "context";
+  elements: {
+    type: "plain_text";
+    text: string;
+  }[];
+};
+
 export async function sendMessageToSlack(
-  webhookUrl: string,
   message: string,
-  programInfo: { title: string; artist: string } | undefined,
+  programInfo: { title: string; personality: string } | undefined,
 ): Promise<void> {
   const blocks = buildBlockKit(
     "Failure of recording",
@@ -9,7 +30,7 @@ export async function sendMessageToSlack(
     message,
     new Date(),
   );
-  const response = await fetch(webhookUrl, {
+  const response = await fetch(Env.webhookUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -21,14 +42,14 @@ export async function sendMessageToSlack(
 
 function buildBlockKit(
   headerText: string,
-  programInfo: { title: string; artist: string } | undefined,
+  programInfo: { title: string; personality: string } | undefined,
   message: string,
   date: Date,
 ): Blocks {
   const additionalInfo =
     programInfo === undefined
       ? ""
-      : `\n*${programInfo.title}*/*${programInfo.artist}*`;
+      : `\n*${programInfo.title}*/*${programInfo.personality}*`;
   const headerTextBlock: SectionBlock = {
     type: "section",
     text: {
@@ -64,23 +85,3 @@ function buildBlockKit(
     blocks: [headerTextBlock, messageBlock, dateContextBlock],
   };
 }
-
-type Blocks = {
-  blocks: (SectionBlock | ContextBlock)[];
-};
-
-type SectionBlock = {
-  type: "section";
-  text: {
-    type: "plain_text" | "mrkdwn";
-    text: string;
-  };
-};
-
-type ContextBlock = {
-  type: "context";
-  elements: {
-    type: "plain_text";
-    text: string;
-  }[];
-};
