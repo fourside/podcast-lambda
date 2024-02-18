@@ -5,7 +5,7 @@ import * as events from "aws-cdk-lib/aws-events";
 import * as targets from "aws-cdk-lib/aws-events-targets";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as logs from "aws-cdk-lib/aws-logs";
-import type { CronEvent } from "../event";
+import type { CronEvent, HeartbeatEvent } from "../event";
 import { env } from "./env";
 import { convertCronOptions, schedules } from "./schedules";
 
@@ -86,6 +86,7 @@ export function createSpotTaskLambda(
     },
   );
 
+  const heartbeatEvent: HeartbeatEvent = { type: "heartbeat" };
   new events.Rule(stack, `${resourceName}-spot-task-rule`, {
     ruleName: "prevent-inactivation",
     schedule: events.Schedule.cron({
@@ -95,7 +96,7 @@ export function createSpotTaskLambda(
     }),
     targets: [
       new targets.LambdaFunction(spotTaskLambda, {
-        event: events.RuleTargetInput.fromObject({}),
+        event: events.RuleTargetInput.fromObject(heartbeatEvent),
       }),
     ],
   });

@@ -21,3 +21,7 @@ export type EventDateTime = {
   hour: number;
   min: number;
 };
+
+export type HeartbeatEvent = {
+  type: "heartbeat";
+};
