@@ -1,16 +1,28 @@
 import type { EventDateTime, SpotTaskEvent } from "../../../event";
-import { formatTimefreeDateTime, subtractIfMidnight } from "../shared/date";
+import {
+  formatTimefreeDateTime,
+  isRecordable,
+  subtractIfMidnight,
+} from "../shared/date";
 import { getOutputFilename } from "../shared/output-filename";
 import type { ProgramTimefree } from "../shared/record";
 
 export function convertEvent(event: SpotTaskEvent): ProgramTimefree {
   const from = eventDateTimeToDate(event.from);
+  const fromRecordable = isRecordable(from);
+  if (!fromRecordable.ok) {
+    throw new Error(`from is invalid: ${fromRecordable.reason}`);
+  }
   const to = eventDateTimeToDate(event.to);
+  const toRecordable = isRecordable(to);
+  if (!toRecordable.ok) {
+    throw new Error(`to is invalid: ${toRecordable.reason}`);
+  }
   const broadcastingDate = subtractIfMidnight(from);
   const outputFileName = getOutputFilename(event.title, broadcastingDate);
 
   return {
-    station: event.stationId,
+    stationId: event.stationId,
     title: event.title,
     artist: event.personality,
     outputFileName,

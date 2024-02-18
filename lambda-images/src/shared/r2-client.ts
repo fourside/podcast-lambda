@@ -3,7 +3,7 @@ import * as path from "node:path";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { Env } from "./env";
 
-export async function putMp3(filePath: string): Promise<void> {
+export async function putMedia(filePath: string): Promise<void> {
   const s3 = new S3Client({
     region: "auto",
     endpoint: `https://${Env.cloudflare.accountId}.r2.cloudflarestorage.com`,
@@ -18,6 +18,7 @@ export async function putMp3(filePath: string): Promise<void> {
     Bucket: Env.cloudflare.bucketName,
     Key: fileName,
     Body: buf,
+    ContentType: "audio/mpeg",
   });
   await s3.send(putCommand);
 

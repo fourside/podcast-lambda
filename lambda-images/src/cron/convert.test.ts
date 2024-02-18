@@ -14,7 +14,8 @@ describe(convertEvent.name, () => {
 
   test("日中", () => {
     // arrange
-    const now = new Date();
+    const now = new Date(2023, 0, 1, 15, 0, 0);
+    vi.setSystemTime(now);
     const year = now.getFullYear();
     const month = twoDigit(now.getMonth() + 1);
     const day = twoDigit(now.getDate());
@@ -30,7 +31,7 @@ describe(convertEvent.name, () => {
     const result = convertEvent(event);
     // assert
     expect(result.title).toBe(event.title);
-    expect(result.station).toBe(event.stationId);
+    expect(result.stationId).toBe(event.stationId);
     expect(result.artist).toBe(event.personality);
     expect(result.year).toBe(year);
     expect(result.outputFileName).toBe(
@@ -42,7 +43,7 @@ describe(convertEvent.name, () => {
 
   test("夜中だとファイル名は前日になり、かつ年末の場合", () => {
     // arrange
-    const now = new Date(2023, 0, 1);
+    const now = new Date(2023, 0, 1, 4, 0, 0);
     vi.setSystemTime(now);
 
     const year = now.getFullYear();
@@ -66,7 +67,7 @@ describe(convertEvent.name, () => {
     const result = convertEvent(event);
     // assert
     expect(result.title).toBe(event.title);
-    expect(result.station).toBe(event.stationId);
+    expect(result.stationId).toBe(event.stationId);
     expect(result.artist).toBe(event.personality);
     expect(result.year).toBe(lastYear);
     expect(result.outputFileName).toBe(

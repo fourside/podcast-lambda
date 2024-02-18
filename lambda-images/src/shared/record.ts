@@ -2,7 +2,7 @@ import { ffmpeg } from "./ffmpeg";
 import { RecRadikoError } from "./rec-radiko-error";
 
 export type ProgramTimefree = {
-  station: string;
+  stationId: string;
   fromTime: string;
   toTime: string;
   title: string;
@@ -23,7 +23,7 @@ export async function record(
     "-headers",
     `X-Radiko-Authtoken: ${authToken}`,
     "-i",
-    `https://radiko.jp/v2/api/ts/playlist.m3u8?station_id=${program.station}&l=15&ft=${program.fromTime}&to=${program.toTime}`,
+    `https://radiko.jp/v2/api/ts/playlist.m3u8?station_id=${program.stationId}&l=15&ft=${program.fromTime}&to=${program.toTime}`,
     "-b:a",
     "128k",
     "-y",

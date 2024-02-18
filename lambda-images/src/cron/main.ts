@@ -1,6 +1,6 @@
 import * as v from "valibot";
 import { authorize } from "../shared/auth-client";
-import { putMp3 } from "../shared/r2-client";
+import { putMedia } from "../shared/r2-client";
 import { record } from "../shared/record";
 import { sendMessageToSlack } from "../shared/slack-client";
 import { convertEvent } from "./convert";
@@ -16,7 +16,7 @@ export async function main(cronEvent: unknown): Promise<void> {
     const program = convertEvent(result.output);
     const authToken = await authorize();
     await record(program, authToken);
-    await putMp3(program.outputFileName);
+    await putMedia(program.outputFileName);
   } catch (err) {
     if (err instanceof Error) {
       await sendMessageToSlack(err.message, {
