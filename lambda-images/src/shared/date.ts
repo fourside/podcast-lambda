@@ -38,3 +38,18 @@ const timeFormatter = new Intl.DateTimeFormat("ja-JP", {
   minute: "2-digit",
   second: "2-digit",
 });
+
+export function isRecordable(
+  date: Date,
+): { ok: true } | { ok: false; reason: "in_the_future" | "past_a_week" } {
+  const now = new Date();
+  if (now.getTime() < date.getTime()) {
+    return { ok: false, reason: "in_the_future" };
+  }
+
+  if (date.getTime() < now.getTime() - 7 * 24 * 60 * 60 * 1000) {
+    return { ok: false, reason: "past_a_week" };
+  }
+
+  return { ok: true };
+}

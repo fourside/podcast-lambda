@@ -1,5 +1,9 @@
-import { describe, expect, test } from "vitest";
-import { formatTimefreeDateTime, subtractIfMidnight } from "./date";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import {
+  formatTimefreeDateTime,
+  isRecordable,
+  subtractIfMidnight,
+} from "./date";
 
 describe(subtractIfMidnight.name, () => {
   test("夜中でなければ同じDate", () => {
@@ -60,5 +64,54 @@ describe(formatTimefreeDateTime.name, () => {
     const result = formatTimefreeDateTime(date);
     // assert
     expect(result).toBe("20200102030405");
+  });
+});
+
+describe(isRecordable.name, () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  test("ok", () => {
+    // arrange
+    const sysDate = new Date(2024, 4, 1, 12, 30, 45);
+    vi.setSystemTime(sysDate);
+    const date = new Date(2024, 4, 1, 11, 0, 0);
+    // act
+    const result = isRecordable(date);
+    // assert
+    expect(result).toStrictEqual<ReturnType<typeof isRecordable>>({ ok: true });
+  });
+
+  test("未来", () => {
+    // arrange
+    const sysDate = new Date(2024, 4, 1, 12, 30, 45);
+    vi.setSystemTime(sysDate);
+    const date = new Date(2024, 4, 1, 12, 40, 0);
+    // act
+    const result = isRecordable(date);
+    // assert
+    expect(result).toStrictEqual<ReturnType<typeof isRecordable>>({
+      ok: false,
+      reason: "in_the_future",
+    });
+  });
+
+  test("過去7日以上経過", () => {
+    // arrange
+    const sysDate = new Date(2024, 4, 8, 12, 30, 45);
+    vi.setSystemTime(sysDate);
+    const date = new Date(2024, 4, 1, 12, 20, 0);
+    // act
+    const result = isRecordable(date);
+    // assert
+    expect(result).toStrictEqual<ReturnType<typeof isRecordable>>({
+      ok: false,
+      reason: "past_a_week",
+    });
   });
 });
