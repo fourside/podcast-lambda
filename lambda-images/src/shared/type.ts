@@ -1,9 +1,24 @@
+export type Program = {
+  stationId: string;
+  fromTime: Date;
+  toTime: Date;
+  title: string;
+  artist: string;
+  year: number;
+  outputFileName: string;
+};
+
+export type HourMin = {
+  hour: number;
+  min: number;
+};
+
 export type CronEvent = {
   title: string;
   stationId: string;
   personality: string;
-  from: { hour: number; min: number };
-  to: { hour: number; min: number };
+  from: HourMin;
+  to: HourMin;
 };
 
 export type SpotTaskEvent = {

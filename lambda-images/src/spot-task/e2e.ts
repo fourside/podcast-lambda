@@ -1,4 +1,4 @@
-import { SpotTaskEvent } from "../../../event";
+import { SpotTaskEvent } from "../shared/type";
 import { main } from "./main";
 
 const now = new Date();

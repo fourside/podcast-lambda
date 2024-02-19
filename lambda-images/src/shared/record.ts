@@ -1,21 +1,15 @@
 import * as fs from "node:fs";
+import { formatTimefreeDateTime } from "./date";
 import { ffmpeg } from "./ffmpeg";
 import { RecRadikoError } from "./rec-radiko-error";
-
-export type ProgramTimefree = {
-  stationId: string;
-  fromTime: string;
-  toTime: string;
-  title: string;
-  artist: string;
-  year: number;
-  outputFileName: string;
-};
+import type { Program } from "./type";
 
 export async function record(
-  program: ProgramTimefree,
+  program: Program,
   authToken: string,
 ): Promise<void> {
+  const ft = formatTimefreeDateTime(program.fromTime);
+  const to = formatTimefreeDateTime(program.toTime);
   const args = [
     "-loglevel",
     "error",
@@ -24,7 +18,7 @@ export async function record(
     "-headers",
     `X-Radiko-Authtoken: ${authToken}`,
     "-i",
-    `https://radiko.jp/v2/api/ts/playlist.m3u8?station_id=${program.stationId}&l=15&ft=${program.fromTime}&to=${program.toTime}`,
+    `https://radiko.jp/v2/api/ts/playlist.m3u8?station_id=${program.stationId}&l=15&ft=${ft}&to=${to}`,
     "-b:a",
     "128k",
     "-y",
@@ -50,14 +44,11 @@ export async function record(
 /**
  * use if ffmpeg's download is unstable
  */
-async function _record(
-  program: ProgramTimefree,
-  authToken: string,
-): Promise<void> {
+async function _record(program: Program, authToken: string): Promise<void> {
   const m3u8Url = await fetchM3U8Url(authToken, {
     stationId: program.stationId,
-    fromTime: program.fromTime,
-    toTime: program.toTime,
+    fromTime: formatTimefreeDateTime(program.fromTime),
+    toTime: formatTimefreeDateTime(program.toTime),
   });
 
   const urls = await fetchAACUrls(m3u8Url, authToken);

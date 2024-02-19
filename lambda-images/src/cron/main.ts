@@ -3,6 +3,7 @@ import { authorize } from "../shared/auth-client";
 import { putMedia } from "../shared/r2-client";
 import { record } from "../shared/record";
 import { sendMessageToSlack } from "../shared/slack-client";
+import { validateFileSize } from "../shared/validator";
 import { convertEvent } from "./convert";
 
 export async function main(cronEvent: unknown): Promise<void> {
@@ -17,6 +18,11 @@ export async function main(cronEvent: unknown): Promise<void> {
     const authToken = await authorize();
     await record(program, authToken);
     await putMedia(program.outputFileName);
+    await validateFileSize(
+      program.outputFileName,
+      program.fromTime,
+      program.toTime,
+    );
   } catch (err) {
     if (err instanceof Error) {
       await sendMessageToSlack(err.message, {

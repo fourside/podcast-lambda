@@ -5,7 +5,7 @@ import * as events from "aws-cdk-lib/aws-events";
 import * as targets from "aws-cdk-lib/aws-events-targets";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as logs from "aws-cdk-lib/aws-logs";
-import type { CronEvent, HeartbeatEvent } from "../event";
+import { CronEvent, HeartbeatEvent } from "../lambda-images/src/shared/type";
 import { env } from "./env";
 import { convertCronOptions, schedules } from "./schedules";
 

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { CronEvent } from "../../../event";
 import { Env } from "../shared/env";
+import { CronEvent } from "../shared/type";
 import { convertEvent } from "./convert";
 
 describe(convertEvent.name, () => {
@@ -37,8 +37,12 @@ describe(convertEvent.name, () => {
     expect(result.outputFileName).toBe(
       `${Env.writableDir}/${event.title}-${nowDate}.mp3`,
     );
-    expect(result.fromTime).toBe(`${nowDate}093000`);
-    expect(result.toTime).toBe(`${nowDate}140500`);
+    expect(result.fromTime).toStrictEqual(
+      newDate(now, event.from.hour, event.from.min),
+    );
+    expect(result.toTime).toStrictEqual(
+      newDate(now, event.to.hour, event.to.min),
+    );
   });
 
   test("夜中だとファイル名は前日になり、かつ年末の場合", () => {
@@ -46,12 +50,7 @@ describe(convertEvent.name, () => {
     const now = new Date(2023, 0, 1, 4, 0, 0);
     vi.setSystemTime(now);
 
-    const year = now.getFullYear();
-    const month = twoDigit(now.getMonth() + 1);
-    const day = twoDigit(now.getDate());
-    const nowDate = `${year}${month}${day}`;
-
-    const lastYear = year - 1;
+    const lastYear = now.getFullYear() - 1;
     const lastMonth = 12;
     const lastDay = 31;
     const lastDate = `${lastYear}${lastMonth}${lastDay}`;
@@ -73,11 +72,23 @@ describe(convertEvent.name, () => {
     expect(result.outputFileName).toBe(
       `${Env.writableDir}/${event.title}-${lastDate}.mp3`,
     );
-    expect(result.fromTime).toBe(`${nowDate}013000`);
-    expect(result.toTime).toBe(`${nowDate}030000`);
+    expect(result.fromTime).toStrictEqual(
+      newDate(now, event.from.hour, event.from.min),
+    );
+    expect(result.toTime).toStrictEqual(
+      newDate(now, event.to.hour, event.to.min),
+    );
   });
 });
 
 function twoDigit(number: number): string {
   return number.toString().padStart(2, "0");
+}
+
+function newDate(base: Date, hour: number, min: number): Date {
+  const date = new Date(base.getTime());
+  date.setHours(hour);
+  date.setMinutes(min);
+  date.setSeconds(0);
+  return date;
 }

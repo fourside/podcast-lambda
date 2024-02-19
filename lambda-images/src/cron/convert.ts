@@ -1,13 +1,8 @@
-import type { CronEvent } from "../../../event";
-import {
-  formatTimefreeDateTime,
-  isRecordable,
-  subtractIfMidnight,
-} from "../shared/date";
+import { isRecordable, subtractIfMidnight } from "../shared/date";
 import { getOutputFilename } from "../shared/output-filename";
-import type { ProgramTimefree } from "../shared/record";
+import type { CronEvent, Program } from "../shared/type";
 
-export function convertEvent(event: CronEvent): ProgramTimefree {
+export function convertEvent(event: CronEvent): Program {
   if (event.from.hour > event.to.hour) {
     throw new Error("converter not support over date program");
   }
@@ -38,8 +33,8 @@ export function convertEvent(event: CronEvent): ProgramTimefree {
     title: event.title,
     artist: event.personality,
     outputFileName,
-    fromTime: formatTimefreeDateTime(from),
-    toTime: formatTimefreeDateTime(to),
+    fromTime: from,
+    toTime: to,
     year: broadcastingDate.getFullYear(),
   };
 }

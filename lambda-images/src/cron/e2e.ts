@@ -1,4 +1,4 @@
-import { CronEvent } from "../../../event";
+import { CronEvent } from "../shared/type";
 import { main } from "./main";
 
 const event: CronEvent = {
