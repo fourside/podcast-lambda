@@ -1,5 +1,6 @@
 import * as fs from "node:fs";
 import { formatTimefreeDateTime } from "./date";
+import { Env } from "./env";
 import { ffmpeg } from "./ffmpeg";
 import { RecRadikoError } from "./rec-radiko-error";
 import type { Program } from "./type";
@@ -8,43 +9,6 @@ export async function record(
   program: Program,
   authToken: string,
 ): Promise<void> {
-  const ft = formatTimefreeDateTime(program.fromTime);
-  const to = formatTimefreeDateTime(program.toTime);
-  const args = [
-    "-loglevel",
-    "error",
-    "-fflags",
-    "+discardcorrupt",
-    "-headers",
-    `X-Radiko-Authtoken: ${authToken}`,
-    "-i",
-    `https://radiko.jp/v2/api/ts/playlist.m3u8?station_id=${program.stationId}&l=15&ft=${ft}&to=${to}`,
-    "-b:a",
-    "128k",
-    "-y",
-    "-metadata",
-    `title=${program.title}`,
-    "-metadata",
-    `artist=${program.artist}`,
-    "-metadata",
-    `year=${program.year}`,
-    program.outputFileName,
-  ];
-  const { success, stdout, stderr } = await ffmpeg(args);
-  if (success) {
-    if (stdout.length !== 0) {
-      console.log(new TextDecoder().decode(stdout));
-    }
-  } else {
-    const error = new TextDecoder().decode(stderr);
-    throw new RecRadikoError(error);
-  }
-}
-
-/**
- * use if ffmpeg's download is unstable
- */
-async function _record(program: Program, authToken: string): Promise<void> {
   const m3u8Url = await fetchM3U8Url(authToken, {
     stationId: program.stationId,
     fromTime: formatTimefreeDateTime(program.fromTime),
@@ -52,7 +16,8 @@ async function _record(program: Program, authToken: string): Promise<void> {
   });
 
   const urls = await fetchAACUrls(m3u8Url, authToken);
-  const fd = fs.openSync(program.outputFileName, "a");
+  const tmpFilePath = `${Env.writableDir}/tmp`;
+  const fd = fs.openSync(tmpFilePath, "a");
   for (const url of urls) {
     await fetchAndWrite(url, fd);
   }
@@ -60,7 +25,9 @@ async function _record(program: Program, authToken: string): Promise<void> {
 
   const args = [
     "-i",
-    program.outputFileName,
+    tmpFilePath,
+    "-c",
+    "copy",
     "-metadata",
     `title=${program.title}`,
     "-metadata",
@@ -100,8 +67,11 @@ async function fetchM3U8Url(
       },
     },
   );
+  if (!res.ok) {
+    throw new Error(`playlist response is not ok. status: ${res.status}`);
+  }
   const body = await res.text();
-  console.debug("get m3u8 url:", body);
+  console.debug("get m3u8 url in... :", body);
 
   const match = body.match(/^https.+$/m);
   if (match === null) {
@@ -120,17 +90,25 @@ async function fetchAACUrls(
     },
   });
   const body = await res.text();
-  console.debug("get m3u8 content", body);
+  if (!res.ok) {
+    throw new Error(
+      `m3u8 response is not ok. status: ${res.status}, url: ${m3u8Url}`,
+    );
+  }
+  console.debug("get m3u8 content:", body);
 
   const match = body.match(/^https.+$/gm);
   if (match === null) {
-    throw new Error("not contain m3u8 url");
+    throw new Error("not contain any media url");
   }
   return match;
 }
 
 async function fetchAndWrite(url: string, fd: number): Promise<void> {
   const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`response is not ok. status: ${res.status}, url: ${url}`);
+  }
   const arrayBuffer = await res.arrayBuffer();
   const buffer = new Uint8Array(arrayBuffer);
   fs.writeSync(fd, buffer);
