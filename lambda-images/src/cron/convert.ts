@@ -8,15 +8,19 @@ export function convertEvent(event: CronEvent): Program {
   }
 
   const from = new Date();
+  const now = from.getTime();
   from.setHours(event.from.hour);
   from.setMinutes(event.from.min);
   from.setSeconds(0);
+  if (from.getTime() > now) {
+    from.setTime(from.getTime() - 24 * 60 * 60 * 1000);
+  }
   const fromRecordable = isRecordable(from);
   if (!fromRecordable.ok) {
     throw new Error(`from is invalid: ${fromRecordable.reason}`);
   }
 
-  const to = new Date();
+  const to = new Date(from.getTime());
   to.setHours(event.to.hour);
   to.setMinutes(event.to.min);
   to.setSeconds(0);

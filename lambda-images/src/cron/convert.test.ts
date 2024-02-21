@@ -79,6 +79,40 @@ describe(convertEvent.name, () => {
       newDate(now, event.to.hour, event.to.min),
     );
   });
+
+  test("日を跨いで実行されたとき", () => {
+    // arrange
+    const now = new Date(2023, 0, 2, 0, 0, 0);
+    vi.setSystemTime(now);
+    const yeasterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    const year = yeasterday.getFullYear();
+    const month = twoDigit(yeasterday.getMonth() + 1);
+    const day = twoDigit(yeasterday.getDate());
+    const nowDate = `${year}${month}${day}`;
+    const event: CronEvent = {
+      title: "テスト",
+      stationId: "TBS",
+      personality: "パーソナリティ",
+      from: { hour: 22, min: 0 },
+      to: { hour: 23, min: 55 },
+    };
+    // act
+    const result = convertEvent(event);
+    // assert
+    expect(result.title).toBe(event.title);
+    expect(result.stationId).toBe(event.stationId);
+    expect(result.artist).toBe(event.personality);
+    expect(result.year).toBe(year);
+    expect(result.outputFileName).toBe(
+      `${Env.writableDir}/${event.title}-${nowDate}.aac`,
+    );
+    expect(result.fromTime).toStrictEqual(
+      newDate(yeasterday, event.from.hour, event.from.min),
+    );
+    expect(result.toTime).toStrictEqual(
+      newDate(yeasterday, event.to.hour, event.to.min),
+    );
+  });
 });
 
 function twoDigit(number: number): string {
