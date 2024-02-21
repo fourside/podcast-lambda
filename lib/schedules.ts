@@ -1,4 +1,4 @@
-import { CronOptions } from "aws-cdk-lib/aws-events";
+import type { CronOptions } from "aws-cdk-lib/aws-events";
 
 type HourMin = { hour: number; min: number };
 
@@ -101,28 +101,91 @@ export const schedules: Schedule[] = [
   },
 ];
 
+const DELAY_MIN = 5;
+
 export function convertCronOptions(
   hourMin: HourMin,
   dayOfWeek: DayOfWeek,
 ): CronOptions {
-  const utcHour = hourMin.hour - 9;
+  const [addedHourmin, addedDayOfWeek] = addMin(hourMin, dayOfWeek, DELAY_MIN);
+
+  const utcHour = addedHourmin.hour - 9;
   if (utcHour < 0) {
     return {
-      minute: hourMin.min.toString(),
+      minute: addedHourmin.min.toString(),
       hour: (utcHour + 24).toString(),
-      weekDay: Array.isArray(dayOfWeek)
-        ? dayOfWeek.map(minusDayOfWeek).join(",")
-        : minusDayOfWeek(dayOfWeek),
+      weekDay: Array.isArray(addedDayOfWeek)
+        ? addedDayOfWeek.map(minusDayOfWeek).join(",")
+        : minusDayOfWeek(addedDayOfWeek),
     };
   }
   return {
-    minute: hourMin.min.toString(),
+    minute: addedHourmin.min.toString(),
     hour: utcHour.toString(),
-    weekDay: Array.isArray(dayOfWeek) ? dayOfWeek.join(",") : dayOfWeek,
+    weekDay: Array.isArray(addedDayOfWeek)
+      ? addedDayOfWeek.join(",")
+      : addedDayOfWeek,
   };
+}
+
+function addMin(
+  hourMin: HourMin,
+  dayOfWeek: DayOfWeek,
+  add: number,
+): [HourMin, DayOfWeek] {
+  const addedMin = hourMin.min + add;
+  if (addedMin >= 60) {
+    return addHour(
+      {
+        hour: hourMin.hour,
+        min: addedMin - 60,
+      },
+      dayOfWeek,
+      1,
+    );
+  }
+  return [
+    {
+      hour: hourMin.hour,
+      min: addedMin,
+    },
+    dayOfWeek,
+  ];
+}
+
+function addHour(
+  hourMin: HourMin,
+  dayOfWeek: DayOfWeek,
+  add: number,
+): [HourMin, DayOfWeek] {
+  const addedHour = hourMin.hour + add;
+  if (addedHour >= 24) {
+    const nextDayOfWeek = Array.isArray(dayOfWeek)
+      ? dayOfWeek.map(plusDayOfWeek)
+      : plusDayOfWeek(dayOfWeek);
+    return [
+      {
+        hour: addedHour - 24,
+        min: hourMin.min,
+      },
+      nextDayOfWeek,
+    ];
+  }
+  return [
+    {
+      hour: addedHour,
+      min: hourMin.min,
+    },
+    dayOfWeek,
+  ];
 }
 
 function minusDayOfWeek(dayOfWeek: SingleDayOfWeek): SingleDayOfWeek {
   const i = DAY_OF_WEEKS.findIndex((it) => it === dayOfWeek);
   return i === 0 ? DAY_OF_WEEKS[6] : DAY_OF_WEEKS[i - 1];
+}
+
+function plusDayOfWeek(dayOfWeek: SingleDayOfWeek): SingleDayOfWeek {
+  const i = DAY_OF_WEEKS.findIndex((it) => it === dayOfWeek);
+  return i === 6 ? DAY_OF_WEEKS[0] : DAY_OF_WEEKS[i + 1];
 }

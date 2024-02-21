@@ -3,6 +3,8 @@ import { describe, expect, test } from "vitest";
 import { convertCronOptions } from "./schedules";
 
 describe(convertCronOptions.name, () => {
+  const DELAY_MIN = 5;
+
   test("JST9時以降で週一回", () => {
     // arrange
     const hourMin = { hour: 22, min: 30 };
@@ -12,7 +14,7 @@ describe(convertCronOptions.name, () => {
     // assert
     expect(result).toStrictEqual<CronOptions>({
       hour: `${hourMin.hour - 9}`,
-      minute: hourMin.min.toString(),
+      minute: (hourMin.min + DELAY_MIN).toString(),
       weekDay: dayOfWeek,
     });
   });
@@ -26,7 +28,7 @@ describe(convertCronOptions.name, () => {
     // assert
     expect(result).toStrictEqual<CronOptions>({
       hour: `${hourMin.hour - 9}`,
-      minute: hourMin.min.toString(),
+      minute: (hourMin.min + DELAY_MIN).toString(),
       weekDay: dayOfWeek.join(","),
     });
   });
@@ -40,7 +42,7 @@ describe(convertCronOptions.name, () => {
     // assert
     expect(result).toStrictEqual<CronOptions>({
       hour: `${hourMin.hour - 9 + 24}`,
-      minute: hourMin.min.toString(),
+      minute: (hourMin.min + DELAY_MIN).toString(),
       weekDay: "SAT",
     });
   });
@@ -54,8 +56,36 @@ describe(convertCronOptions.name, () => {
     // assert
     expect(result).toStrictEqual<CronOptions>({
       hour: `${hourMin.hour - 9 + 24}`,
-      minute: hourMin.min.toString(),
+      minute: (hourMin.min + DELAY_MIN).toString(),
       weekDay: ["FRI", "SAT", "SUN"].join(","),
+    });
+  });
+
+  test("分が繰り上げ", () => {
+    // arrange
+    const hourMin = { hour: 9, min: 58 };
+    const dayOfWeek = "MON";
+    // act
+    const result = convertCronOptions(hourMin, dayOfWeek);
+    // assert
+    expect(result).toStrictEqual<CronOptions>({
+      hour: "1",
+      minute: "3",
+      weekDay: "MON",
+    });
+  });
+
+  test("時間が繰り上げ", () => {
+    // arrange
+    const hourMin = { hour: 23, min: 58 };
+    const dayOfWeek = "MON";
+    // act
+    const result = convertCronOptions(hourMin, dayOfWeek);
+    // assert
+    expect(result).toStrictEqual<CronOptions>({
+      hour: "15",
+      minute: "3",
+      weekDay: "MON", // JSTで日付（曜日）が次に進んでもUTCにしたとき一日戻る
     });
   });
 });
