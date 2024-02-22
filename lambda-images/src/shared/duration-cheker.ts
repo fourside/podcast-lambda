@@ -1,8 +1,7 @@
-import * as fs from "node:fs";
 import { getDuration } from "./ffmpeg";
 import { RecRadikoError } from "./rec-radiko-error";
 
-export async function warnIfDurationIsShort(
+export async function checkIfDurationIsShort(
   filePath: string,
   from: Date,
   to: Date,

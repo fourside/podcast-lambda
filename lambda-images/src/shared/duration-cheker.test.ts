@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
-import { warnIfDurationIsShort } from "./warn";
+import { checkIfDurationIsShort } from "./duration-cheker";
 
-describe(warnIfDurationIsShort.name, () => {
+describe(checkIfDurationIsShort.name, () => {
   afterAll(() => {
     vi.restoreAllMocks();
   });
@@ -25,7 +25,7 @@ describe(warnIfDurationIsShort.name, () => {
     const from = new Date(2024, 0, 1, 1, 0, 0);
     const to = new Date(2024, 0, 1, 1, 10, 0); // duration is 600 sec
     // act
-    const result = await warnIfDurationIsShort(filePath, from, to);
+    const result = await checkIfDurationIsShort(filePath, from, to);
     // assert
     expect(result).toBe(true);
   });
@@ -37,7 +37,7 @@ describe(warnIfDurationIsShort.name, () => {
     const to = new Date(2024, 0, 1, 1, 10, 0); // duration is 600 sec
     // act & assert
     await expect(() =>
-      warnIfDurationIsShort(filePath, from, to),
+      checkIfDurationIsShort(filePath, from, to),
     ).rejects.toThrowError(/^recorded duration is small/);
   });
 });
