@@ -26,8 +26,8 @@ export async function record(
   const args = [
     "-i",
     tmpFilePath,
-    "-c",
-    "copy",
+    "-b:a",
+    "128k",
     "-metadata",
     `title=${program.title}`,
     "-metadata",

@@ -10,6 +10,6 @@ describe(getOutputFilename.name, () => {
     // act
     const result = getOutputFilename(title, date);
     // assert
-    expect(result).toBe(`${Env.writableDir}/title-20220101.aac`);
+    expect(result).toBe(`${Env.writableDir}/title-20220101.mp3`);
   });
 });

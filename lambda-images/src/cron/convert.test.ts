@@ -35,7 +35,7 @@ describe(convertEvent.name, () => {
     expect(result.artist).toBe(event.personality);
     expect(result.year).toBe(year);
     expect(result.outputFileName).toBe(
-      `${Env.writableDir}/${event.title}-${nowDate}.aac`,
+      `${Env.writableDir}/${event.title}-${nowDate}.mp3`,
     );
     expect(result.fromTime).toStrictEqual(
       newDate(now, event.from.hour, event.from.min),
@@ -70,7 +70,7 @@ describe(convertEvent.name, () => {
     expect(result.artist).toBe(event.personality);
     expect(result.year).toBe(lastYear);
     expect(result.outputFileName).toBe(
-      `${Env.writableDir}/${event.title}-${lastDate}.aac`,
+      `${Env.writableDir}/${event.title}-${lastDate}.mp3`,
     );
     expect(result.fromTime).toStrictEqual(
       newDate(now, event.from.hour, event.from.min),
@@ -104,7 +104,7 @@ describe(convertEvent.name, () => {
     expect(result.artist).toBe(event.personality);
     expect(result.year).toBe(year);
     expect(result.outputFileName).toBe(
-      `${Env.writableDir}/${event.title}-${nowDate}.aac`,
+      `${Env.writableDir}/${event.title}-${nowDate}.mp3`,
     );
     expect(result.fromTime).toStrictEqual(
       newDate(yeasterday, event.from.hour, event.from.min),
