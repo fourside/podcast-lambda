@@ -13,7 +13,7 @@ export async function main(event: unknown): Promise<void> {
   }
   const result = v.safeParse(SpotTaskEventSchema, event);
   if (!result.success) {
-    console.error(result.issues);
+    console.error(JSON.stringify(result.issues, null, 2));
     throw new Error("spot task event is not valid");
   }
   try {
