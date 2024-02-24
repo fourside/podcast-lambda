@@ -1,5 +1,6 @@
 import * as v from "valibot";
 import { authorize } from "../shared/auth-client";
+import { clearRecordingSpace } from "../shared/clear-recording-space";
 import { checkIfDurationIsShort } from "../shared/duration-cheker";
 import { putMedia } from "../shared/r2-client";
 import { record } from "../shared/record";
@@ -19,6 +20,7 @@ export async function main(event: unknown): Promise<void> {
   try {
     const program = convertEvent(result.output);
     const authToken = await authorize();
+    await clearRecordingSpace();
     await record(program, authToken);
     await putMedia(program.outputFileName);
     await checkIfDurationIsShort(
