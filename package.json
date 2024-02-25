@@ -9,12 +9,14 @@
     "watch": "tsc -w",
     "test": "vitest",
     "cdk": "cdk",
+    "table": "ts-node lib/table-schedules.ts",
     "prepare": "git config --local core.hooksPath .githooks"
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
     "@types/node": "20.11.14",
     "aws-cdk": "2.127.0",
+    "ts-node": "^10.9.2",
     "typescript": "~5.3.3",
     "vitest": "^1.2.2"
   },

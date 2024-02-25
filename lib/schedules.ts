@@ -1,11 +1,11 @@
 import type { CronOptions } from "aws-cdk-lib/aws-events";
 
-type HourMin = { hour: number; min: number };
+export type HourMin = { hour: number; min: number };
 
 const DAY_OF_WEEKS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"] as const;
 
 type SingleDayOfWeek = (typeof DAY_OF_WEEKS)[number];
-type DayOfWeek = SingleDayOfWeek | SingleDayOfWeek[];
+export type DayOfWeek = SingleDayOfWeek | SingleDayOfWeek[];
 
 type Schedule = {
   name: string;
