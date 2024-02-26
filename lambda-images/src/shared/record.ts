@@ -16,6 +16,7 @@ export async function record(
   });
 
   const urls = await fetchAACUrls(m3u8Url, authToken);
+  console.debug("aac url size: ", urls.length);
   const tmpFilePath = `${Env.writableDir}/tmp`;
   const fd = fs.openSync(tmpFilePath, "a");
   for (const url of urls) {
@@ -95,10 +96,10 @@ async function fetchAACUrls(
       `m3u8 response is not ok. status: ${res.status}, url: ${m3u8Url}`,
     );
   }
-  console.debug("get m3u8 content:", body);
 
   const match = body.match(/^https.+$/gm);
   if (match === null) {
+    console.debug("get m3u8 content:", body);
     throw new Error("not contain any media url");
   }
   return match;
