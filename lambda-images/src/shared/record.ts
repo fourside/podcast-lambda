@@ -18,7 +18,11 @@ export async function record(
   const urls = await fetchAACUrls(m3u8Url, authToken);
   console.debug("aac url size: ", urls.length);
   const tmpFilePath = `${Env.writableDir}/tmp`;
-  const fd = fs.openSync(tmpFilePath, "a");
+  if (fs.existsSync(tmpFilePath)) {
+    // timeout causes retry
+    fs.rmSync(tmpFilePath);
+  }
+  const fd = fs.openSync(tmpFilePath, "ax");
   for (const url of urls) {
     await fetchAndWrite(url, fd);
   }
@@ -29,6 +33,7 @@ export async function record(
     tmpFilePath,
     "-b:a",
     "128k",
+    "-y",
     "-metadata",
     `title=${program.title}`,
     "-metadata",
