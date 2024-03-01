@@ -10,9 +10,15 @@ export class PodcastLambdaStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    const ecrLifecycleRule: ecr.LifecycleRule = {
+      rulePriority: 1,
+      maxImageCount: 1,
+    };
+
     const ecrCronRepository = new ecr.Repository(this, "PodcastEcrCronRepo", {
       repositoryName: `${resourceName}-cron-repository`,
     });
+    ecrCronRepository.addLifecycleRule(ecrLifecycleRule);
 
     const ecrSpotTaskRepository = new ecr.Repository(
       this,
@@ -21,6 +27,7 @@ export class PodcastLambdaStack extends cdk.Stack {
         repositoryName: `${resourceName}-spot-task-repository`,
       },
     );
+    ecrSpotTaskRepository.addLifecycleRule(ecrLifecycleRule);
 
     const ecrRole = new iam.Role(this, "PodcastEcrRole", {
       roleName: `${resourceName}-repository-role`,
