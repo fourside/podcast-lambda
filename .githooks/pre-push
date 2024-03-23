@@ -1,7 +1,7 @@
 !/bin/sh
 set -xe
 
-TARGET_PATH="lambda-images"
+TARGET_PATH="lambda-image"
 
 HAS_CHANGES=false
 

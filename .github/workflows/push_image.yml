@@ -3,14 +3,14 @@ on:
     branches:
       - main
     paths:
-      - "lambda-images/src/**"
+      - "lambda-image/src/**"
 
 jobs:
   push-image:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: lambda-images
+        working-directory: lambda-image
     timeout-minutes: 300
     permissions:
       id-token: write
