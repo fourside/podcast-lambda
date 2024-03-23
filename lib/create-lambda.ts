@@ -5,33 +5,29 @@ import * as events from "aws-cdk-lib/aws-events";
 import * as targets from "aws-cdk-lib/aws-events-targets";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as logs from "aws-cdk-lib/aws-logs";
-import { CronEvent, HeartbeatEvent } from "../lambda-images/src/shared/type";
+import type { CronEvent } from "../lambda-image/src/type";
 import { env } from "./env";
 import { convertCronOptions, schedules } from "./schedules";
 
-export function createCronLambda(
+export function createLambda(
   stack: cdk.Stack,
   resourceName: string,
   ecr: ecr.Repository,
 ): void {
-  const logGroup = new logs.LogGroup(stack, `${resourceName}-cron-log-group`, {
-    logGroupName: "/aws/lambda/podcast-lambda-cron",
+  const logGroup = new logs.LogGroup(stack, `${resourceName}-log-group`, {
+    logGroupName: "/aws/lambda/podcast-lambda",
     removalPolicy: RemovalPolicy.DESTROY,
     retention: logs.RetentionDays.THREE_MONTHS,
   });
 
-  const cronLambda = new lambda.DockerImageFunction(
-    stack,
-    `${resourceName}-cron`,
-    {
-      functionName: `${resourceName}-cron`,
-      code: lambda.DockerImageCode.fromEcr(ecr),
-      logGroup,
-      timeout: Duration.minutes(10),
-      memorySize: 1024,
-      environment: { ...env, TZ: "Asia/Tokyo" },
-    },
-  );
+  const cronLambda = new lambda.DockerImageFunction(stack, resourceName, {
+    functionName: resourceName,
+    code: lambda.DockerImageCode.fromEcr(ecr),
+    logGroup,
+    timeout: Duration.minutes(10),
+    memorySize: 1024,
+    environment: { ...env, TZ: "Asia/Tokyo" },
+  });
 
   for (const schedule of schedules) {
     const targetInput: CronEvent = {
@@ -56,48 +52,4 @@ export function createCronLambda(
       ],
     });
   }
-}
-
-export function createSpotTaskLambda(
-  stack: cdk.Stack,
-  resourceName: string,
-  ecr: ecr.Repository,
-): void {
-  const logGroup = new logs.LogGroup(
-    stack,
-    `${resourceName}-spot-task-log-group`,
-    {
-      logGroupName: "/aws/lambda/podcast-lambda-spot-task",
-      removalPolicy: RemovalPolicy.DESTROY,
-      retention: logs.RetentionDays.THREE_MONTHS,
-    },
-  );
-
-  const spotTaskLambda = new lambda.DockerImageFunction(
-    stack,
-    `${resourceName}-spot-task`,
-    {
-      functionName: `${resourceName}-spot-task`,
-      code: lambda.DockerImageCode.fromEcr(ecr),
-      logGroup,
-      timeout: Duration.minutes(10),
-      memorySize: 1024,
-      environment: { ...env, TZ: "Asia/Tokyo" },
-    },
-  );
-
-  const heartbeatEvent: HeartbeatEvent = { type: "heartbeat" };
-  new events.Rule(stack, `${resourceName}-spot-task-rule`, {
-    ruleName: "prevent-inactivation",
-    schedule: events.Schedule.cron({
-      minute: "0",
-      hour: "0",
-      weekDay: "SUN",
-    }),
-    targets: [
-      new targets.LambdaFunction(spotTaskLambda, {
-        event: events.RuleTargetInput.fromObject(heartbeatEvent),
-      }),
-    ],
-  });
 }

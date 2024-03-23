@@ -2,7 +2,7 @@ import * as cdk from "aws-cdk-lib";
 import * as ecr from "aws-cdk-lib/aws-ecr";
 import * as iam from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
-import { createCronLambda, createSpotTaskLambda } from "./create-lambda";
+import { createLambda } from "./create-lambda";
 
 const resourceName = "podcast-lambda";
 
@@ -15,19 +15,10 @@ export class PodcastLambdaStack extends cdk.Stack {
       maxImageCount: 1,
     };
 
-    const ecrCronRepository = new ecr.Repository(this, "PodcastEcrCronRepo", {
-      repositoryName: `${resourceName}-cron-repository`,
+    const ecrRepository = new ecr.Repository(this, "PodcastEcrRepo", {
+      repositoryName: `${resourceName}-repository`,
     });
-    ecrCronRepository.addLifecycleRule(ecrLifecycleRule);
-
-    const ecrSpotTaskRepository = new ecr.Repository(
-      this,
-      "PodcastEcrSpotRepo",
-      {
-        repositoryName: `${resourceName}-spot-task-repository`,
-      },
-    );
-    ecrSpotTaskRepository.addLifecycleRule(ecrLifecycleRule);
+    ecrRepository.addLifecycleRule(ecrLifecycleRule);
 
     const ecrRole = new iam.Role(this, "PodcastEcrRole", {
       roleName: `${resourceName}-repository-role`,
@@ -60,17 +51,12 @@ export class PodcastLambdaStack extends cdk.Stack {
           "ecr:BatchCheckLayerAvailability",
         ],
         effect: iam.Effect.ALLOW,
-        resources: [
-          ecrCronRepository.repositoryArn,
-          ecrSpotTaskRepository.repositoryArn,
-        ],
+        resources: [ecrRepository.repositoryArn],
       }),
     );
 
-    ecrCronRepository.grant(ecrRole);
-    ecrSpotTaskRepository.grant(ecrRole);
+    ecrRepository.grant(ecrRole);
 
-    createCronLambda(this, resourceName, ecrCronRepository);
-    createSpotTaskLambda(this, resourceName, ecrSpotTaskRepository);
+    createLambda(this, resourceName, ecrRepository);
   }
 }
