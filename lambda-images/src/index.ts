@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/node";
 import type { APIGatewayProxyResult, Context } from "aws-lambda";
-import { Env } from "../shared/env";
+import { Env } from "./env";
 import { main } from "./main";
 
 Sentry.init({ dsn: Env.sentryDsn });
@@ -23,6 +23,7 @@ export const handler = async (
       }),
     };
   }
+
   return {
     statusCode: 200,
     body: JSON.stringify({

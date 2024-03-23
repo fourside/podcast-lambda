@@ -1,8 +1,49 @@
-import { isRecordable, subtractIfMidnight } from "../shared/date";
-import { getOutputFilename } from "../shared/output-filename";
-import type { EventDateTime, Program, SpotTaskEvent } from "../shared/type";
+import { isRecordable, subtractIfMidnight } from "./date";
+import { getOutputFilename } from "./output-filename";
+import type { CronEvent, EventDateTime, Program, SpotTaskEvent } from "./type";
 
-export function convertEvent(event: SpotTaskEvent): Program {
+export function convertCronEvent(event: CronEvent): Program {
+  if (event.from.hour > event.to.hour) {
+    throw new Error("converter not support over date program");
+  }
+
+  const from = new Date();
+  const now = from.getTime();
+  from.setHours(event.from.hour);
+  from.setMinutes(event.from.min);
+  from.setSeconds(0);
+  if (from.getTime() > now) {
+    from.setTime(from.getTime() - 24 * 60 * 60 * 1000);
+  }
+  const fromRecordable = isRecordable(from);
+  if (!fromRecordable.ok) {
+    throw new Error(`from is invalid: ${fromRecordable.reason}`);
+  }
+
+  const to = new Date(from.getTime());
+  to.setHours(event.to.hour);
+  to.setMinutes(event.to.min);
+  to.setSeconds(0);
+  const toRecordable = isRecordable(to);
+  if (!toRecordable.ok) {
+    throw new Error(`to is invalid: ${toRecordable.reason}`);
+  }
+
+  const broadcastingDate = subtractIfMidnight(from);
+  const outputFileName = getOutputFilename(event.title, broadcastingDate);
+
+  return {
+    stationId: event.stationId,
+    title: event.title,
+    artist: event.personality,
+    outputFileName,
+    fromTime: from,
+    toTime: to,
+    year: broadcastingDate.getFullYear(),
+  };
+}
+
+export function convertSpotTaskEvent(event: SpotTaskEvent): Program {
   const from = eventDateTimeToDate(event.from);
   const fromRecordable = isRecordable(from);
   if (!fromRecordable.ok) {

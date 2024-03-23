@@ -3,8 +3,7 @@ on:
     branches:
       - main
     paths:
-      - "lambda-images/src/spot-task/**"
-      - "lambda-images/src/shared/**"
+      - "lambda-images/src/**"
 
 jobs:
   push-image:
@@ -32,10 +31,10 @@ jobs:
       - name: Build and push
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: podcast-lambda-spot-task-repository
+          REPOSITORY: podcast-lambda-repository
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build . -f spotTask.Dockerfile --tag ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }} --tag ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:latest
+          docker build . -f Dockerfile --tag ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }} --tag ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:latest
           docker push ${{ env.REGISTRY }}/${{ env.REPOSITORY }} --all-tags
 
       - name: Configure AWS credentials
@@ -47,8 +46,8 @@ jobs:
 
       - name: Update Lambda function
         env:
-          FUNCTION_NAME: podcast-lambda-spot-task
+          FUNCTION_NAME: podcast-lambda
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: podcast-lambda-spot-task-repository
+          REPOSITORY: podcast-lambda-repository
           IMAGE_TAG: ${{ github.sha }}
         run: aws lambda update-function-code --function-name ${{ env.FUNCTION_NAME}} --image-uri ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}

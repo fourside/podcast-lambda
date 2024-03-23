@@ -4,12 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:cron": "node build.js cron",
-    "build:spot-task": "node build.js spot-task",
+    "build": "node build.js",
     "check": "biome ci src",
     "test": "TZ=Asia/Tokyo vitest",
-    "e2e:cron": "node -r ts-node/register --env-file=./.env src/cron/e2e.ts",
-    "e2e:spot-task": "node -r ts-node/register --env-file=./.env src/spot-task/e2e.ts"
+    "e2e": "node -r ts-node/register --env-file=./.env src/e2e.ts"
   },
   "keywords": [],
   "author": "",

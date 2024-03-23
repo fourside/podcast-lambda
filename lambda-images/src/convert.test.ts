@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { Env } from "../shared/env";
-import { CronEvent } from "../shared/type";
-import { convertEvent } from "./convert";
+import { convertCronEvent } from "./convert";
+import { Env } from "./env";
+import { CronEvent } from "./type";
 
-describe(convertEvent.name, () => {
+describe(convertCronEvent.name, () => {
   beforeEach(() => {
     vi.useFakeTimers();
   });
@@ -28,7 +28,7 @@ describe(convertEvent.name, () => {
       to: { hour: 14, min: 5 },
     };
     // act
-    const result = convertEvent(event);
+    const result = convertCronEvent(event);
     // assert
     expect(result.title).toBe(event.title);
     expect(result.stationId).toBe(event.stationId);
@@ -63,7 +63,7 @@ describe(convertEvent.name, () => {
       to: { hour: 3, min: 0 },
     };
     // act
-    const result = convertEvent(event);
+    const result = convertCronEvent(event);
     // assert
     expect(result.title).toBe(event.title);
     expect(result.stationId).toBe(event.stationId);
@@ -97,7 +97,7 @@ describe(convertEvent.name, () => {
       to: { hour: 23, min: 55 },
     };
     // act
-    const result = convertEvent(event);
+    const result = convertCronEvent(event);
     // assert
     expect(result.title).toBe(event.title);
     expect(result.stationId).toBe(event.stationId);

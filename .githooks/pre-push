@@ -26,4 +26,4 @@ cd $TARGET_PATH
 
 npm run check
 npm run test -- --run
-npm run build:cron
+npm run build

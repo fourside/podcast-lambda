@@ -1,16 +1,14 @@
-name: ci_cron_image
+name: ci_spot_task_image
 
 on:
   push:
     branches:
       - main
     paths:
-      - "lambda-images/src/cron/**"
-      - "lambda-images/src/shared/**"
+      - "lambda-images/src/**"
   pull_request:
     paths:
-      - "lambda-images/src/cron/**"
-      - "lambda-images/src/shared/**"
+      - "lambda-images/src/**"
 
 jobs:
   ci:
@@ -38,4 +36,4 @@ jobs:
         run: npm run test -- run
 
       - name: Build
-        run: npm run build:cron
+        run: npm run build

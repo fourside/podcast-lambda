@@ -1,9 +1,17 @@
-import { SpotTaskEvent } from "../shared/type";
 import { main } from "./main";
+import type { CronEvent, SpotTaskEvent } from "./type";
+
+const cronEvent: CronEvent = {
+  title: "サンプル",
+  stationId: "TBS",
+  personality: "パーソナリティ",
+  from: { hour: 22, min: 30 },
+  to: { hour: 22, min: 32 },
+};
 
 const now = new Date();
 
-const event: SpotTaskEvent = {
+const spotTaskEvent: SpotTaskEvent = {
   title: "サンプル",
   stationId: "TBS",
   personality: "パーソナリティ",
@@ -24,5 +32,5 @@ const event: SpotTaskEvent = {
 };
 
 (async () => {
-  await main(event);
+  await main(spotTaskEvent);
 })();
