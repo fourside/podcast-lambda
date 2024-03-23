@@ -31,6 +31,7 @@ export function createLambda(
 
   for (const schedule of schedules) {
     const targetInput: CronEvent = {
+      type: "cron",
       title: schedule.title,
       stationId: schedule.stationId,
       personality: schedule.personality,

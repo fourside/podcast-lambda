@@ -14,6 +14,7 @@ export type HourMin = {
 };
 
 export type CronEvent = {
+  type: "cron";
   title: string;
   stationId: string;
   personality: string;
@@ -22,6 +23,7 @@ export type CronEvent = {
 };
 
 export type SpotTaskEvent = {
+  type: "spot-task";
   title: string;
   stationId: string;
   personality: string;
