@@ -99,6 +99,15 @@ export const schedules: Schedule[] = [
     toTime: { hour: 18, min: 0 },
     dayOfWeek: ["TUE", "WED", "THU", "FRI"],
   },
+  {
+    name: "ijuuin_no_choi_tane",
+    title: "伊集院光のちょいタネ",
+    stationId: "LFR",
+    personality: "伊集院光",
+    fromTime: { hour: 11, min: 20 },
+    toTime: { hour: 11, min: 30 },
+    dayOfWeek: ["MON", "TUE", "WED", "THU", "FRI"],
+  },
 ];
 
 const DELAY_MIN = 5;
