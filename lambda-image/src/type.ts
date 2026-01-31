@@ -38,3 +38,8 @@ export type EventDateTime = {
   hour: number;
   min: number;
 };
+
+export type AuthResult = {
+  authToken: string;
+  areaId: string;
+};

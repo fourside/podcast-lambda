@@ -24,8 +24,8 @@ export async function main(event: unknown): Promise<void> {
 async function cron(event: CronEvent): Promise<void> {
   try {
     const program = convertCronEvent(event);
-    const authToken = await authorize();
-    await record(program, authToken);
+    const auth = await authorize();
+    await record(program, auth);
     await putMedia(program.outputFileName);
     await checkIfDurationIsShort(
       program.outputFileName,
@@ -46,9 +46,9 @@ async function cron(event: CronEvent): Promise<void> {
 async function spotTask(event: SpotTaskEvent): Promise<void> {
   try {
     const program = convertSpotTaskEvent(event);
-    const authToken = await authorize();
+    const auth = await authorize();
     await clearRecordingSpace();
-    await record(program, authToken);
+    await record(program, auth);
     await putMedia(program.outputFileName);
     await checkIfDurationIsShort(
       program.outputFileName,
