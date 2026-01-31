@@ -31,5 +31,5 @@ export async function getDuration(filePath: string): Promise<number> {
   }
   const stdout = new TextDecoder().decode(result.stdout);
   console.debug("ffprobe stdout:", stdout);
-  return Math.ceil(Number.parseFloat(stdout));
+  return Math.round(Number.parseFloat(stdout));
 }
