@@ -1,4 +1,4 @@
-!/bin/sh
+#!/bin/sh
 set -xe
 
 TARGET_PATH="lambda-image"
@@ -8,7 +8,12 @@ HAS_CHANGES=false
 # コミットを走査して、対象のファイルパスの変更があるか確認
 while read -r local_ref local_sha remote_ref remote_sha
 do
-    # 変更されたファイルを取得
+    # 新規ブランチの場合（remote_sha が全てゼロ）
+    if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+        # main との差分を見る（または origin/main）
+        remote_sha=$(git rev-parse origin/main)
+    fi
+
     changed_files=$(git diff --name-only "$local_sha" "$remote_sha")
 
     # 対象のファイルが変更されているか確認
