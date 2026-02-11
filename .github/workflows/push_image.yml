@@ -3,7 +3,8 @@ on:
     branches:
       - main
     paths:
-      - "lambda-image/src/**"
+      - "lambda-image/**"
+  workflow_dispatch:
 
 jobs:
   push-image:
