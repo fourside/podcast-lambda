@@ -1,7 +1,7 @@
 # Define custom function directory
 ARG FUNCTION_DIR="/function"
 
-FROM node:20-bullseye as build-image
+FROM node:24-bookworm as build-image
 
 # Include global arg in this stage of the build
 ARG FUNCTION_DIR
@@ -30,7 +30,7 @@ RUN npm ci \
 
 
 # Grab a fresh slim copy of the image to reduce the final size
-FROM node:20-bullseye-slim
+FROM node:24-bookworm-slim
 
 # Required for Node runtimes which use npm@8.6.0+ because
 # by default npm writes logs under /home/.npm and Lambda fs is read-only
